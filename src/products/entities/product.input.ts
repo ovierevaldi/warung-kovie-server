@@ -22,7 +22,6 @@ export class ProductInput{
 
   @IsOptional()
   @IsString({ message: 'Image URL must be a string' })
-  @IsUrl({}, { message: 'Image URL must be a valid URL' })
   imageUrl?: string;
 }
 
