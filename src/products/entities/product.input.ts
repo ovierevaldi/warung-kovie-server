@@ -1,5 +1,6 @@
 import { Type } from "class-transformer";
 import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUrl, MaxLength, MinLength } from "class-validator"
+import { PartialType } from "@nestjs/mapped-types";
 
 export class ProductInput{
   @IsNotEmpty({ message: 'Name is required' })
@@ -24,3 +25,5 @@ export class ProductInput{
   @IsUrl({}, { message: 'Image URL must be a valid URL' })
   imageUrl?: string;
 }
+
+export class ProductUpdate extends PartialType(ProductInput){}
