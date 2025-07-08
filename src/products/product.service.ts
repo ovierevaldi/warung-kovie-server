@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ProductEntity } from "./entities/product.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { ProductInput } from "./entities/product.input";
+import { ProductInput, ProductUpdate } from "./entities/product.input";
 
 @Injectable()
 export class ProductService{
@@ -22,6 +22,29 @@ export class ProductService{
     } 
     catch (error) {
       throw new Error('Cannot Insert New Product')
+    }
+  }
+
+  async updateOne(id: number, productUpdate: ProductUpdate): Promise<boolean>{
+    try {
+      const product = await this.productRepo.findOne({
+        where: {
+          id: id
+        }
+      });
+
+      if(!product)
+        throw new Error('Product Not Found');
+
+      const updateResult = await this.productRepo.update(id, { ...productUpdate});
+
+      return updateResult.affected !== undefined && updateResult.affected > 0;
+
+    } catch (error) {
+      if(error instanceof Error)
+        throw error;
+
+      throw new Error('Cannot Update Product')
     }
   }
 }
