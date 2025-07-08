@@ -1,9 +1,26 @@
+import { Type } from "class-transformer";
+import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUrl, MaxLength, MinLength } from "class-validator"
+
 export class ProductInput{
-  name: string
+  @IsNotEmpty({ message: 'Name is required' })
+  @IsString({ message: 'Name must be a string' })
+  @MinLength(2, { message: 'Name must be at least 2 characters' })
+  @MaxLength(50, { message: 'Name must be at most 50 characters' })
+  name: string;
 
-  desc?: string
+  @IsOptional()
+  @IsString({ message: 'Description must be a string' })
+  @MaxLength(500, { message: 'Description is too long' })
+  desc?: string;
 
-  price: number
+  @IsNotEmpty({ message: 'Price is required' })
+  @Type(() => Number) 
+  @IsNumber({}, { message: 'Price must be a number' })
+  @IsPositive({ message: 'Price must be greater than 0' })
+  price: number;
 
-  imageUrl?: string
+  @IsOptional()
+  @IsString({ message: 'Image URL must be a string' })
+  @IsUrl({}, { message: 'Image URL must be a valid URL' })
+  imageUrl?: string;
 }

@@ -8,12 +8,12 @@ export class ProductEntity{
   @Column({ type: 'varchar', length: 50})
   name: string
 
-  @Column('text')
-  desc: string
+  @Column({ type: 'text', nullable: true})
+  desc?: string
 
   @Column({ type: 'integer'})
   price: number
 
-  @Column('text')
-  imageUrl: string
+  @Column({ type: 'text', nullable: true})
+  imageUrl?: string
 }
