@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ProductEntity } from "./entities/product.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { ProductInput, ProductUpdate } from "./entities/product.input";
 
 @Injectable()
@@ -10,8 +10,13 @@ export class ProductService{
     @InjectRepository(ProductEntity) private readonly productRepo: Repository<ProductEntity>
   ){}
 
-  async findAll(): Promise<ProductEntity[]>{
-    return this.productRepo.find()
+  async findAll(searchKeyword: string): Promise<ProductEntity[]>{
+    return this.productRepo.find({
+      where: [
+        { name: ILike(`%${searchKeyword}%`) },
+        { desc: ILike(`%${searchKeyword}%`) },
+      ],
+    });
   }
 
   async insertOne(productInput: ProductInput): Promise<ProductEntity>{
