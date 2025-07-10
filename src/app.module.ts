@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ProductModule } from './products/product.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { join } from 'path';
       synchronize: true
     }),
     ProductModule,
+    OrderModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'assets', 'ProductImage'),
       serveRoot: '/product-images'
