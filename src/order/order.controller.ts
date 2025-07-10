@@ -19,4 +19,11 @@ export class OrderController{
   ){
     return this.orderService.insertOne(orderInput);
   }
+
+  @Get('info-antrian/:order_id')
+  getInfoAntrial(
+    @Param('order_id') order_id: string
+  ){
+    return this.orderService.getInfoAntrian(order_id)
+  }
 }

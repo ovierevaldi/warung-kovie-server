@@ -1,9 +1,11 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { OrderEntity } from "./dto/order.entity";
-import { DataSource, Repository } from "typeorm";
+import { Between, DataSource, Repository } from "typeorm";
 import { DetailOrderEntity } from "./dto/detailOrder.entity";
 import { OrderInput } from "./dto/orderInput";
 import { DocumentCode } from "src/lib/documentCode";
+import { InfoAntrian } from "./dto/order.output";
+import { InternalServerErrorException, NotFoundException } from "@nestjs/common";
 
 export class OrderService{
   constructor(
@@ -20,7 +22,7 @@ export class OrderService{
     });
   }
 
-  async insertOne(orderInput: OrderInput): Promise<string>{
+  async insertOne(orderInput: OrderInput): Promise<{ orderId: string}>{
     try {
       return this.dataSource.transaction(async (manager) => {
       // Generate Order ID
@@ -47,7 +49,7 @@ export class OrderService{
       
       await manager.save(detailOrder);
 
-      return 'Success Creating Order';
+      return {orderId: orderId};
     });
     } catch (error) {
       if(error instanceof Error)
@@ -71,5 +73,30 @@ export class OrderService{
     } catch (error) {
       throw new Error('Cannot Generate Order Id')
     }
+  };
+
+  async getInfoAntrian(order_id: string): Promise<InfoAntrian>{
+    const today = new Date();
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(today.setHours(23, 59, 59, 999))
+
+    const listOrder = await this.orderRepo.find({
+      where: {
+        date: Between(startOfDay, endOfDay)
+      },
+      order: {
+        date: 'ASC'
+      }
+    });
+
+    const nomorAntri = listOrder.findIndex((lo) => lo.id === order_id);
+
+    if(nomorAntri === -1)
+      throw new NotFoundException("Invalid Order ID")
+
+    return {
+      nama_pelanggan: listOrder[nomorAntri].nama_pemesan,
+      nomor_antrian: nomorAntri + 1
+    };
   }
 }
