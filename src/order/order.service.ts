@@ -15,7 +15,8 @@ export class OrderService{
     return await this.orderRepo.findOne({
       where: {
         id: id
-      }
+      },
+      relations: ['detail_pesanan']
     });
   }
 
